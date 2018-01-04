@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ticket">
+	<insert id="insertOne" parameterType="ticketinformation">
+		<foreach item="item" index="index" collection="reallist" open="INSERT ALL "
+			separator=" " close="SELECT * FROM DUAL">
+			into ticket2(ticketinfo,listt,stadium,seat,line,paid,user_id) values (
+			#{item.ticketinfo,jdbcType=VARCHAR},#{item.listt,jdbcType=VARCHAR},#{item.stadium,jdbcType=VARCHAR},
+			#{item.seat,jdbcType=VARCHAR},#{item.line,jdbcType=VARCHAR},0,'aaaa')
+		</foreach>
+
+	</insert>
+	
+	<insert id="payment" parameterType="ticketReservation">
+		insert into ticketres (user_id, ticketinfo, user_name, user_phone, money) values (
+		'aaaa',#{ticketinfo,jdbcType=VARCHAR},#{user_name,jdbcType=VARCHAR},
+		#{user_phone,jdbcType=VARCHAR},#{money,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<update id="comfirm" parameterType="ticketReservation">
+		update ticket2 set paid = 1 where user_id = #{user_id}
+	</update>
+	
+	<select id="selectform" resultType="ticketinformation">
+		select * from ticket2 where paid = 1
+	</select>
+
+	<delete id="delete" parameterType="ticketinformation">
+		delete from ticket2 where stadium = #{stadium}
+	</delete>
+
+</mapper>

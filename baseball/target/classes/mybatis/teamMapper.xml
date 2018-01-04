@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="teamMap">
+
+	<select id="selectList" resultType="tvo">
+		select * from team
+	</select>
+
+
+	<sql id="sch">
+		<where>
+			<if test="what!=null and what!=''">
+
+				${kind} like '%'||#{what}||'%'
+
+			</if>
+		</where>
+	</sql>
+
+	<select id="selectListSch" resultType="tvo" parameterType="tsch">
+		select * from team
+		<include refid="sch" />
+
+	</select>
+
+
+	<sql id="sch2">
+		<if test="sss.what!=null and sss.what!=''">
+			${sss.kind} like '%'||#{sss.what}||'%' or
+		</if>
+	</sql>
+
+	<select id="selectListSchList" resultType="tvo"
+		parameterType="tsch">
+
+		select * from team
+		<where>
+			<if test="list!=null">
+
+				<foreach collection="list" item="sss">
+					<include refid="sch2" />
+				</foreach>
+
+				1!=1
+			</if>
+
+			<if test="cnt!=null and cnt!=0">
+				<if test="list!=null">
+					or
+				</if>
+			   		<![CDATA[  cnt >= #{cnt}    ]]>
+			</if>
+
+
+		</where>
+	</select>
+
+
+
+	<select id="selectDetail" resultType="tvo" parameterType="tvo">
+		select * from team where id = #{id}
+	</select>
+
+	<insert id="insertOne" parameterType="tvo">
+		<selectKey keyProperty="id" order="BEFORE" resultType="java.lang.Integer">
+			select max(id)+1 from team
+		</selectKey>
+		insert into team (id, gid, seq,lev, cnt, reg_date, pname, pw, title,
+		content, upfile ) values
+		(#{id},#{id},0,0,-1,sysdate,#{pname}, #{pw}, #{title}, #{content},#{upfile})
+
+	</insert>
+
+
+	<select id="idPwChk" resultType="tvo" parameterType="tvo">
+		select * from team where id = #{id} and pw = #{pw}
+	</select>
+
+	<update id="fileDelete" parameterType="tvo">
+		update team set upfile = null where id = #{id}
+	</update>
+
+	<delete id="delete" parameterType="tvo">
+		delete from team where id = #{id}
+	</delete>
+
+
+	<delete id="modify" parameterType="tvo">
+		update team set pname = #{pname} , title = #{title} ,
+		content = #{content}, upfile = #{upfile}
+		where id = #{id} and pw = #{pw}
+	</delete>
+
+
+
+</mapper>
